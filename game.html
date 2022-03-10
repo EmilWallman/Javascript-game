@@ -38,33 +38,68 @@ let activeBullet = false;
 let bulletx = 0;
 let bullety = 0;    
 
-const bullets1 = [];
-const bullets2 = [];
-const bulletxx = [];
-const bulletyy = [];
+let bullets1 = [];
+let bullets2 = [];
+
 //player cords
 var p1 = {x: 100, y: 360, speed: 10}
 
 //enemies
-var enemy = {x: 400, y:1630, speed: 4}
-const enemies = [];
- 
+let enemyend = false
 
+let enemy = [];
+rndy = getRnd(20, window.innerHeight-20);
+rndx = getRnd(window.innerWidth-500, window.innerWidth); 
+ 
+function getRnd(min, max){
+    return Math.floor(Math.random()* (max - min + 1) ) + min;
+}
 function update()
 {
+
+    
     clearScreen();
+    
 
-
-    circle(enemy.y, enemy.x, 10, "black")
-    if (enemy.y > 0){
-        enemy.y -= 4;
-
-        enemies.push([enemy.x, enemy.y]);
-        if (enemy.y <= 0){
-            health.value -= 10
-        }
+    for(let i = 0; i < 2; i++){
         
+        
+        enemy.push([rndx, rndy]);
+
+        circle(enemy[i][0], enemy[i][1], 40, "red")
+        if (enemy[i][0] > -5){
+            enemy[i][0] -= 4;
+            
+            if (enemy[i][0] < -1 && enemy[i][1] <= window.innerWidth){
+                enemyend = true;      
+            }
+        }  
     }
+    
+        
+    if (enemyend == true){
+        health.value -= 20;
+        enemyend = false;
+    }
+    
+
+    
+
+    
+    for(let i = 0; i < bullets1.length; i++){
+        for(let j = 0; j < enemy.length; j++){ 
+            let distans = distance(bullets1[i][0], bullets1[i][1], enemy[j][0] + 20, enemy[j][1] + 20);
+            if (distans < 40){
+                
+                alert(" x " + enemy[j][0] +" "+ bullets1[i][0] + " y " + bullets1[i][1] +" "+ enemy[j][1]);
+            }
+        }
+        //if (distance(bullets2[i][0], bullets2[i][1], enemy[i][0], enemy[i][1]) < 42){
+        //    alert("2")
+        //}
+    
+    }
+    
     //TEST*****
     if (keyboard.g){
         health.value -= 10;
@@ -84,31 +119,29 @@ function update()
     //Bullets
     if (keyboard.space){
         activeBullet = true;
-        bulletx = p1.x;
-        bullety = p1.y;
+        bulletx = p1.x +58;
+        bullety = p1.y +48;
 
         bullets1.push([bulletx, bullety]);
-        bullets2.push([bulletx, bullety]);
+        bullets2.push([bulletx, bullety + 51]);
     }
 
     if(activeBullet == true){
         for(let i = 0; i < bullets1.length; i++){
-            bullets1[i][0]+= 40;
+            bullets1[i][0]+= 20;
             bullets1[i][1]+=0;
 
-            bullets2[i][0]+= 40;
+            bullets2[i][0]+= 20;
             bullets2[i][1]+=0;
 
             if (bullets1.length > 100){
                 bullets1.shift();
                 bullets2.shift();
-                bulletxx.shift();
-                bulletyy.shift();
+                
             }   
-            circle(bullets1[i][0] + 58, bullets1[i][1] +48, 2, "black");
-            circle(bullets2[i][0] + 58 , bullets2[i][1] + 92, 2, "black");
-            bulletxx.push([bullets1[i][0]])
-            bulletyy.push([bullets1[i][1]]) 
+            circle(bullets1[i][0] , bullets1[i][1] , 2, "black");
+            circle(bullets2[i][0]  , bullets2[i][1] , 2, "black");
+            
         }
     }
 
